@@ -69,7 +69,7 @@ class GutFloraDataset(Dataset):
     
 
 def get_top_features(feature_df):
-    top_total = feature_df.nlargest(100, 'Total_Gain')['Analyst'].tolist()
+    top_total = feature_df.nlargest(100, 'Total_Gain_cv')['Analyst'].tolist()
     return  top_total
 
 def parse_args():
@@ -91,9 +91,6 @@ data_df = pd.read_csv(dpath+'AbundanceData_preprocessed.csv')
 cv_df = pd.read_csv(dpath+'PhenotypeData.csv',usecols=['eid','cv_id'])
 df = pd.merge(data_df, cv_df, how='inner', on=['eid'])
 
-imp_df = pd.read_csv(result_path+'/'+clade_name+'/S1_FS/Importance_1_all.csv')
-tmp_lst = get_top_features(imp_df)
-input_dim = len(get_top_features(imp_df))
 
 
 model_dir = os.path.join(result_path, clade_name, 'S2_Model')
@@ -104,11 +101,15 @@ for cv_id in range(5):
     if not os.path.exists(model_path):
         print(f"[Warning] Model file not found: {model_path}. Skipping this model.")
         continue
+    # Match this checkpoint to the feature ranking from its training fold.
+    imp_df = pd.read_csv(os.path.join(result_path, clade_name, 'S1_FS', f'Importance_1_cv{cv_id}.csv'))
+    tmp_lst = get_top_features(imp_df)
+    input_dim = len(tmp_lst)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = TransformerModel(input_dim=input_dim).to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
-    model_cache[cv_id] = (model)
+    model_cache[cv_id] = (model, tmp_lst)
     
 
 
@@ -116,7 +117,7 @@ for cv_id in range(5):
 for cv_id in range(5):
     if cv_id not in model_cache:
         continue
-    model = model_cache[cv_id]
+    model, tmp_lst = model_cache[cv_id]
     all_results = []
     valid_df = df[df['cv_id'] == cv_id]
     # tmp_lst = get_top_features(imp_df)

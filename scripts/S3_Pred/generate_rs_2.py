@@ -53,7 +53,7 @@ class TransformerModel(nn.Module):
 
 
 def get_top_features(feature_df):
-    top_total = feature_df.nlargest(100, 'Total_Gain')['Analyst'].tolist()
+    top_total = feature_df.nlargest(100, 'Total_Gain_cv')['Analyst'].tolist()
     return  top_total
 
 def parse_args():
@@ -78,7 +78,7 @@ df = pd.merge(data_df, cv_df, how='inner', on=['eid'])
 for cv_id in range(5):
     all_results = []
     valid_df = df[df['cv_id'] == cv_id]
-    imp_df = pd.read_csv(result_path+'/'+clade_name+'/S1_FS/Importance_2_all.csv')
+    imp_df = pd.read_csv(os.path.join(result_path, clade_name, 'S1_FS', f'Importance_2_cv{cv_id}.csv'))
     tmp_lst = get_top_features(imp_df)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = TransformerModel(input_dim = len(tmp_lst)).to(device)

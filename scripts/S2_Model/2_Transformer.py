@@ -106,7 +106,7 @@ def evaluate_model (model,dataloader,device):
 
 
 def get_top_features(feature_df):
-    top_total = feature_df.nlargest(100, 'Total_Gain')['Analyst'].tolist()
+    top_total = feature_df.nlargest(100, 'Total_Gain_cv')['Analyst'].tolist()
     return  top_total
 
 def parse_args():
@@ -228,7 +228,7 @@ def main(rank,world_size,clade_name):
         train_df = df[df['cv_id'] != cv_id]
         valid_df = df[df['cv_id'] == cv_id]
         'Load the selected feature list.'
-        imp_df = pd.read_csv(result_path+'/'+clade_name+'/S1_FS/Importance_2_all.csv')
+        imp_df = pd.read_csv(os.path.join(result_path, clade_name, 'S1_FS', f'Importance_2_cv{cv_id}.csv'))
         top_total = get_top_features(imp_df)
         total_epochs = 30
         # if rank == 0:
