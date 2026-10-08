@@ -44,7 +44,15 @@ The training scripts target Linux. Transformer training uses NVIDIA GPUs with **
 
 ## Assets and usage
 
-The workflow starts from three prepared CSV files: `AbundanceData_preprocessed.csv` (sample-by-taxon abundances), `PhenotypeData.csv` (sample IDs and fold assignments), and `Analyst_summary.csv` (taxon names and analysis types).
+Example input data are provided in [`demo_data`](demo_data), containing **200 samples and 100 microbial taxa**. Samples are assigned to five cross-validation folds (`cv_id` 0–4), with 40 samples per fold.
+
+| File | Contents |
+| --- | --- |
+| [`AbundanceData_preprocessed.csv`](demo_data/AbundanceData_preprocessed.csv) | Abundance matrix with 200 sample rows, an `eid` column, and 100 taxon columns |
+| [`PhenotypeData.csv`](demo_data/PhenotypeData.csv) | Sample metadata and fold assignments, matched to the abundance matrix by `eid` |
+| [`Analyst_summary.csv`](demo_data/Analyst_summary.csv) | Taxon names, observation counts, and analysis types for all 100 taxa |
+
+To use these data, set `dpath` in the relevant scripts to the absolute path of `demo_data/`, including the trailing slash, and configure the output paths consistently across stages. Select a target from the `Analyst` column and run feature selection, model training, prediction export, and evaluation in order (`S1_FS` → `S2_Model` → `S3_Pred` → `S4_Eval`). Transformer training requires the GPU environment described above.
 
 ## License
 
@@ -56,6 +64,6 @@ Third-party code and dependencies remain subject to their respective licenses.
 
 ## Website
 
-[![Gut Microbial Colonization Atlas website homepage](assets/website-homepage.png)](https://gut-colonization-atlas.com)
+[![Gut Microbial Colonization Atlas website homepage](assets/website-homepage.jpg)](https://gut-colonization-atlas.com)
 
 **Website:** [gut-colonization-atlas.com](https://gut-colonization-atlas.com)
