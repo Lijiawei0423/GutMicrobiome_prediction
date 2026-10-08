@@ -230,7 +230,7 @@ def main(rank,world_size,clade_name):
         'Load the selected feature list.'
         imp_df = pd.read_csv(os.path.join(result_path, clade_name, 'S1_FS', f'Importance_2_cv{cv_id}.csv'))
         top_total = get_top_features(imp_df)
-        total_epochs = 30
+        total_epochs = 50
         # if rank == 0:
         #     print(f'❗️For: {clade_name} Begin: LightGBM')
         # lightgbm_corr = model_train_valid(train_df,valid_df,clade_name,top_lightgbm,rank,world_size,device,total_epochs)

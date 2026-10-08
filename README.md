@@ -28,6 +28,8 @@ Two prediction tasks are implemented: classification of microbial presence and r
 
 The training scripts target Linux. Transformer training uses NVIDIA GPUs with **PyTorch 2.5.1 and `pytorch-cuda=12.1`**.
 
+The study models were trained in parallel using **eight NVIDIA L20 GPUs**. Both training scripts use the Adam optimizer with a learning rate of **0.001**, a batch size of **16 per GPU**, and **50 epochs per cross-validation fold**. With eight GPU processes, a full training batch contains 128 samples in total. The number of GPU processes is set when launching distributed training; eight GPUs describe the study configuration, rather than a hard-coded requirement.
+
 | Component | Version |
 | --- | --- |
 | Python | 3.11.10 |
@@ -75,7 +77,7 @@ Here, `{fold}` ranges from 0 to 4. These are descriptions of the files generated
 
 ### Expected runtime for the demo
 
-The demonstration dataset contains 200 samples and 100 microbial taxa. A complete run for a selected target includes feature selection, five-fold Transformer training, prediction export, and bootstrap evaluation. The current training scripts use 30 epochs per fold; evaluation uses 1,000 bootstrap resamples by default.
+The demonstration dataset contains 200 samples and 100 microbial taxa. A complete run for a selected target includes feature selection, five-fold Transformer training, prediction export, and bootstrap evaluation. The current training scripts use 50 epochs per fold; evaluation uses 1,000 bootstrap resamples by default.
 
 The training scripts require CUDA and initialize distributed training with NCCL, so the complete workflow cannot run unchanged on a CPU-only desktop. Runtime depends on CPU and GPU specifications, the number of GPUs, and the number of target taxa evaluated.
 

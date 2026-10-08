@@ -133,8 +133,8 @@ def model_train_valid(train_df,test_df,clade_name,tmp_lst,rank,world_size,device
     train_sampler = torch.utils.data.distributed.DistributedSampler(train_data, num_replicas=world_size, rank=rank,shuffle=True)
     valid_sampler = torch.utils.data.distributed.DistributedSampler(valid_data, num_replicas=world_size, rank=rank,shuffle=False, drop_last=False)
     
-    train_loader = DataLoader(train_data, batch_size=64, shuffle=False, sampler=train_sampler, drop_last=False)
-    valid_loader = DataLoader(valid_data, batch_size=64, shuffle=False, sampler=valid_sampler, drop_last=False)
+    train_loader = DataLoader(train_data, batch_size=16, shuffle=False, sampler=train_sampler, drop_last=False)
+    valid_loader = DataLoader(valid_data, batch_size=16, shuffle=False, sampler=valid_sampler, drop_last=False)
 
     model = TransformerModel(input_dim=len(tmp_lst)).to(device)
     model = DistributedDataParallel(
@@ -251,7 +251,7 @@ def main(rank,world_size,clade_name):
         'Load the selected feature list.'
         imp_df = pd.read_csv(os.path.join(result_path, clade_name, 'S1_FS', f'Importance_1_cv{cv_id}.csv'))
         top_total = get_top_features(imp_df)
-        total_epochs = 30
+        total_epochs = 50
         if rank == 0:
             print(f'❗️For: {clade_name} Begin: TotalGain') 
         totalgain_auc = model_train_valid(train_df,valid_df,clade_name,top_total,rank,world_size,device,total_epochs,cv_id)
